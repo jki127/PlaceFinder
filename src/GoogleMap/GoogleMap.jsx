@@ -2,14 +2,9 @@ import React from 'react';
 
 // TODO Convert to stateless component
 class GoogleMap extends React.Component {
-  constructor() {
-    super();
-    this.markers = [];
-  }
-
   clearMarkers(){
-    const markers = this.markers;
-    if(markers.length > 0){
+    const markers = Object.values(this.props.markers);
+    if(markers.length > 0) {
       for(let i = 0; i < markers.length; i++){
         const marker = markers[i];
         marker.setMap(null);
@@ -19,13 +14,14 @@ class GoogleMap extends React.Component {
 
   addMarkers(places, mapObject) {
     this.clearMarkers();
-    let markers = [];
+    let markers = {};
     for (let i = 0; i < places.length; i++) {
       const place = places[i];
       const marker = new window.google.maps.Marker({
         map: mapObject,
         title: place.name,
         position: place.geometry.location,
+        animation: window.google.maps.Animation.DROP,
       });
 
       const infoWindow = new window.google.maps.InfoWindow({
@@ -39,9 +35,10 @@ class GoogleMap extends React.Component {
         infoWindow.open(mapObject, marker);
         this.currentInfoWindow = infoWindow;
       });
-      markers.push(marker);
+
+      markers[place.id] = marker;
     }
-    this.markers = markers;
+    this.props.onNewMarkers(markers);
   }
 
   render() {

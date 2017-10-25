@@ -8,7 +8,10 @@ class App extends Component {
   constructor() {
     super();
     this.state = {};
+    this.markers = [];
     this.handleNewSearch = this.handleNewSearch.bind(this);
+    this.handleNewMarkers = this.handleNewMarkers.bind(this);
+    this.handleHoverPlace = this.handleHoverPlace.bind(this);
   }
   componentDidMount() {
     this.mapObject = this.initMap();
@@ -40,9 +43,7 @@ class App extends Component {
   }
 
   retrievePlaces(query) {
-    const service = new window.google.maps.places.PlacesService(
-      this.mapObject
-    );
+    const service = new window.google.maps.places.PlacesService(this.mapObject);
     const request = { query: query, bounds: this.mapObject.getBounds() };
     service.textSearch(request, (results, status) => {
       if (status === window.google.maps.places.PlacesServiceStatus.OK) {
@@ -51,18 +52,34 @@ class App extends Component {
     });
   }
 
+  handleNewMarkers(markers) {
+    console.log(markers);
+    this.markers = markers;
+  }
+
+  handleHoverPlace(placeId) {
+    const marker = this.markers[placeId];
+    marker.setAnimation(window.google.maps.Animation.BOUNCE);
+    setTimeout(() => {marker.setAnimation(null);}, 1400);
+  }
+
   render() {
     return (
       <div className="App">
         <div className="fl w-30">
           <SearchInput onNewSearch={this.handleNewSearch} />
-          <Places places={this.state.places} />
+          <Places
+            places={this.state.places}
+            onHoverPlace={this.handleHoverPlace}
+          />
         </div>
         <div className="fl w-70 h-100">
           <GoogleMap
             className="h-100"
             mapObject={this.mapObject}
             places={this.state.places}
+            markers={this.markers}
+            onNewMarkers={this.handleNewMarkers}
           />
         </div>
       </div>
