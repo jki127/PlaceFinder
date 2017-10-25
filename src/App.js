@@ -7,11 +7,15 @@ import './App.css';
 class App extends Component {
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      placeSelected: false,
+    };
     this.markers = [];
+
     this.handleNewSearch = this.handleNewSearch.bind(this);
     this.handleNewMarkers = this.handleNewMarkers.bind(this);
     this.handleHoverPlace = this.handleHoverPlace.bind(this);
+    this.handleClickPlace = this.handleClickPlace.bind(this);
   }
   componentDidMount() {
     this.mapObject = this.initMap();
@@ -53,14 +57,22 @@ class App extends Component {
   }
 
   handleNewMarkers(markers) {
-    console.log(markers);
     this.markers = markers;
   }
 
   handleHoverPlace(placeId) {
+    if(!this.state.placeSelected){
+      const marker = this.markers[placeId];
+      window.google.maps.event.trigger(marker, 'click');
+    }
+  }
+
+  handleClickPlace(placeId){
     const marker = this.markers[placeId];
-    marker.setAnimation(window.google.maps.Animation.BOUNCE);
-    setTimeout(() => {marker.setAnimation(null);}, 1400);
+    this.mapObject.setCenter(marker.getPosition());
+    this.mapObject.setZoom(15);
+    window.google.maps.event.trigger(marker, 'click');
+    this.setState({ placeSelected: true });
   }
 
   render() {
@@ -71,6 +83,7 @@ class App extends Component {
           <Places
             places={this.state.places}
             onHoverPlace={this.handleHoverPlace}
+            onClickPlace={this.handleClickPlace}
           />
         </div>
         <div className="fl w-70 h-100">
