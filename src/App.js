@@ -15,8 +15,8 @@ class App extends Component {
 
     this.handleNewSearch = this.handleNewSearch.bind(this);
     this.handleNewMarkers = this.handleNewMarkers.bind(this);
-    this.handleHoverPlace = this.handleHoverPlace.bind(this);
     this.handleClickPlace = this.handleClickPlace.bind(this);
+    this.handleClickMarker = this.handleClickMarker.bind(this);
   }
   componentDidMount() {
     this.mapObject = this.initMap();
@@ -49,8 +49,8 @@ class App extends Component {
 
   retrievePlaces(query) {
     const service = new window.google.maps.places.PlacesService(this.mapObject);
-    const request = { keyword: query, bounds: this.mapObject.getBounds() };
-    service.nearbySearch(request, (results, status) => {
+    const request = { query: query, bounds: this.mapObject.getBounds() };
+    service.textSearch(request, (results, status) => {
       // TODO Must add view for bad queries
       if (status === window.google.maps.places.PlacesServiceStatus.OK) {
         this.setState({ places: results });
@@ -62,13 +62,6 @@ class App extends Component {
     this.markers = markers;
   }
 
-  handleHoverPlace(placeId) {
-    if (!this.placeSelected) {
-      const marker = this.markers[placeId];
-      window.google.maps.event.trigger(marker, 'click');
-    }
-  }
-
   handleClickPlace(placeId) {
     const marker = this.markers[placeId];
     marker.setAnimation(null);
@@ -78,6 +71,10 @@ class App extends Component {
     this.placeSelected = true;
   }
 
+  handleClickMarker(placeId){
+    this.setState({selectedPlaceId: placeId});
+  }
+
   render() {
     return (
       <div className="App">
@@ -85,8 +82,8 @@ class App extends Component {
           <SearchInput onNewSearch={this.handleNewSearch} />
           <Places
             places={this.state.places}
-            onHoverPlace={this.handleHoverPlace}
             onClickPlace={this.handleClickPlace}
+            selectedPlaceId={this.state.selectedPlaceId}
           />
         </div>
         <div className="fl w-70 h-100">
@@ -96,6 +93,7 @@ class App extends Component {
             places={this.state.places}
             markers={this.markers}
             onNewMarkers={this.handleNewMarkers}
+            onClickMarker={this.handleClickMarker}
           />
         </div>
       </div>

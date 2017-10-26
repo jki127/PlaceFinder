@@ -1,0 +1,8 @@
+.Place {
+  height: 150px;
+  overflow: hidden;
+}
+
+.Place img {
+  object-fit: cover;
+}

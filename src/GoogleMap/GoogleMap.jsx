@@ -1,7 +1,12 @@
 import React from 'react';
 
-// TODO Convert to stateless component
 class GoogleMap extends React.Component {
+  shouldComponentUpdate(nextProps){
+    if(this.props.places !== nextProps.places){
+      this.addMarkers(this.props.places, this.props.mapObject);
+    }
+    return false;
+  }
   clearMarkers(){
     const markers = Object.values(this.props.markers);
     if(markers.length > 0) {
@@ -34,6 +39,7 @@ class GoogleMap extends React.Component {
         }
         infoWindow.open(mapObject, marker);
         this.currentInfoWindow = infoWindow;
+        this.props.onClickMarker(place.id);
       });
 
       markers[place.id] = marker;
@@ -42,9 +48,6 @@ class GoogleMap extends React.Component {
   }
 
   render() {
-    if (this.props.mapObject && this.props.places) {
-      this.addMarkers(this.props.places, this.props.mapObject);
-    }
     return <div id="map" className={`${this.props.className}`} />;
   }
 }
