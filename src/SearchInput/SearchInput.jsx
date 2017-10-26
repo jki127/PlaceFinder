@@ -1,12 +1,8 @@
 import React from 'react';
 
-function SearchInput({ onNewSearch }){
+function SearchInput({ onNewSearch }) {
   return (
-    <input
-      type="text"
-      placeholder="Find your place"
-      onInput={onNewSearch}
-    />
+    <input type="text" placeholder="Find your place" onInput={onNewSearch} />
   );
 }
 

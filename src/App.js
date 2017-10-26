@@ -8,8 +8,9 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      placeSelected: false,
+      places: [],
     };
+    this.placeSelected = false;
     this.markers = [];
 
     this.handleNewSearch = this.handleNewSearch.bind(this);
@@ -23,7 +24,7 @@ class App extends Component {
 
   initMap() {
     const map = new window.google.maps.Map(document.getElementById('map'), {
-      zoom: 10,
+      zoom: 13,
       center: { lat: 37.7830521, lng: -122.3932186 },
     });
 
@@ -48,8 +49,9 @@ class App extends Component {
 
   retrievePlaces(query) {
     const service = new window.google.maps.places.PlacesService(this.mapObject);
-    const request = { query: query, bounds: this.mapObject.getBounds() };
-    service.textSearch(request, (results, status) => {
+    const request = { keyword: query, bounds: this.mapObject.getBounds() };
+    service.nearbySearch(request, (results, status) => {
+      // TODO Must add view for bad queries
       if (status === window.google.maps.places.PlacesServiceStatus.OK) {
         this.setState({ places: results });
       }
@@ -61,24 +63,25 @@ class App extends Component {
   }
 
   handleHoverPlace(placeId) {
-    if(!this.state.placeSelected){
+    if (!this.placeSelected) {
       const marker = this.markers[placeId];
       window.google.maps.event.trigger(marker, 'click');
     }
   }
 
-  handleClickPlace(placeId){
+  handleClickPlace(placeId) {
     const marker = this.markers[placeId];
+    marker.setAnimation(null);
     this.mapObject.setCenter(marker.getPosition());
     this.mapObject.setZoom(15);
     window.google.maps.event.trigger(marker, 'click');
-    this.setState({ placeSelected: true });
+    this.placeSelected = true;
   }
 
   render() {
     return (
       <div className="App">
-        <div className="fl w-30">
+        <div className="fl w-30 h-100 overflow-container">
           <SearchInput onNewSearch={this.handleNewSearch} />
           <Places
             places={this.state.places}
