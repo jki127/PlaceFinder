@@ -22,11 +22,11 @@ function Place({ place, onHoverPlace, onClickPlace, selected }) {
   const backgroundColor = selected ? 'bg-dark-blue' : 'bg-blue';
   return (
     <div
-      className={`Place ma2 pa2 white shadow-4 pointer ${backgroundColor}`}
+      className={`Place ma2 pa3 white shadow-4 pointer ${backgroundColor}`}
       onMouseOver={handleHover}
       onClick={handleClick}
     >
-      <h1 className="f3">{place.name}</h1>
+      <h3 className="f3">{place.name}</h3>
       {openNow()}
     </div>
   );
