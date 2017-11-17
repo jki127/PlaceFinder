@@ -53,7 +53,10 @@ class App extends Component {
     service.textSearch(request, (results, status) => {
       // TODO Must add view for bad queries
       if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-        this.setState({ places: results });
+        const resultsInBounds = results.filter((place) => {
+          return this.mapObject.getBounds().contains(place.geometry.location);
+        });
+        this.setState({ places: resultsInBounds });
       }
     });
   }
@@ -66,7 +69,6 @@ class App extends Component {
     const marker = this.markers[placeId];
     marker.setAnimation(null);
     this.mapObject.setCenter(marker.getPosition());
-    this.mapObject.setZoom(15);
     window.google.maps.event.trigger(marker, 'click');
     this.placeSelected = true;
   }

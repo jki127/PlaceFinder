@@ -3,10 +3,11 @@ import React from 'react';
 class GoogleMap extends React.Component {
   shouldComponentUpdate(nextProps){
     if(this.props.places !== nextProps.places){
-      this.addMarkers(this.props.places, this.props.mapObject);
+      this.addMarkers(nextProps.places, nextProps.mapObject);
     }
     return false;
   }
+
   clearMarkers(){
     const markers = Object.values(this.props.markers);
     if(markers.length > 0) {
